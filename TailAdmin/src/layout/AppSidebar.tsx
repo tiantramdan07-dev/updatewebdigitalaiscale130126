@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
     name: "Dashboard Admin",
     subItems: [
       { name: "Data Produk", path: "/AiScale/dataproduk", pro: false },
-      { name: "Riwayat Penimbangan", path: "/AiScale/riwayat", pro: false },
+    // { name: "Riwayat Penimbangan", path: "/AiScale/riwayat", pro: false },
       { name: "Laporan", path: "/AiScale/laporan", pro: false },
       // { name: "Pengaturan", path: "/AiScale/pengaturan", pro: false },
     ],

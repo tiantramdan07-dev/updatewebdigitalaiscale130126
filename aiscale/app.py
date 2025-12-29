@@ -250,12 +250,15 @@ def auth_me(current_email):
 # -----------------------------
 # Existing public endpoints (kept)
 # -----------------------------
+# @app.route("/")
+# def index():
+    # try:
+        # return render_template("index.html")
+    # except Exception:
+        # return "<h3>API Server running. No index.html found.</h3>"
 @app.route("/")
 def index():
-    try:
-        return render_template("index.html")
-    except Exception:
-        return "<h3>API Server running. No index.html found.</h3>"
+    return jsonify({"status": "API running"})
 
 @app.route("/api/status", methods=["POST"])
 def api_status():
@@ -286,62 +289,67 @@ def api_status():
 
 
 # -----------------------------
-# Video feed (protected) - note about access below
+# Video feed (DISABLED)
+# Alasan:
+# - Streaming MJPEG menjalankan YOLO terus-menerus
+# - Terlalu berat untuk Raspberry Pi
+# - Digantikan oleh endpoint /api/detect_frame (request-based)
 # -----------------------------
-def generate_frames():
-    global latest_detection
-    if model is None:
-        while True:
-            blank = (255 * np.ones((480, 640, 3), dtype="uint8"))
-            ret, buffer = cv2.imencode('.jpg', blank)
-            frame_bytes = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-    else:
-        while True:
-            success, frame = cap.read()
-            if not success:
-                break
-            results = model(frame, conf=0.6, verbose=False)
-            annotated_frame = results[0].plot() if len(results) > 0 else frame
-            try:
-                if len(results[0].boxes) > 0:
-                    top_detection = results[0].boxes[0]
-                    cls_idx = int(as_number(top_detection.cls)) if hasattr(top_detection, "cls") else 0
-                    label = model.names[cls_idx] if hasattr(model, "names") else str(cls_idx)
-                    # store server-side detection under a special key
-                    latest_detection["server"] = {
-                        "detection": label,
-                        "weight": latest_weight,
-                        "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
-                    }
-                else:
-                    latest_detection["server"] = {
-                        "detection": "Tidak ada",
-                        "weight": latest_weight,
-                        "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
-                    }
-            except Exception:
-                latest_detection["server"] = {
-                    "detection": "Tidak ada",
-                    "weight": latest_weight,
-                    "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
-                }
 
-            ret, buffer = cv2.imencode('.jpg', annotated_frame)
-            frame_bytes = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+# def generate_frames():
+#     global latest_detection
+#     if model is None:
+#         while True:
+#             blank = (255 * np.ones((480, 640, 3), dtype="uint8"))
+#             ret, buffer = cv2.imencode('.jpg', blank)
+#             frame_bytes = buffer.tobytes()
+#             yield (b'--frame\r\n'
+#                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+#     else:
+#         while True:
+#             success, frame = cap.read()
+#             if not success:
+#                 break
+#             results = model(frame, conf=0.6, verbose=False)
+#             annotated_frame = results[0].plot() if len(results) > 0 else frame
+#             try:
+#                 if len(results[0].boxes) > 0:
+#                     top_detection = results[0].boxes[0]
+#                     cls_idx = int(as_number(top_detection.cls)) if hasattr(top_detection, "cls") else 0
+#                     label = model.names[cls_idx] if hasattr(model, "names") else str(cls_idx)
+#                     # store server-side detection under a special key
+#                     latest_detection["server"] = {
+#                         "detection": label,
+#                         "weight": latest_weight,
+#                         "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
+#                     }
+#                 else:
+#                     latest_detection["server"] = {
+#                         "detection": "Tidak ada",
+#                         "weight": latest_weight,
+#                         "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
+#                     }
+#             except Exception:
+#                 latest_detection["server"] = {
+#                     "detection": "Tidak ada",
+#                     "weight": latest_weight,
+#                     "ts": datetime.now(tz=ZoneInfo("Asia/Jakarta")).isoformat()
+#                 }
+#
+#             ret, buffer = cv2.imencode('.jpg', annotated_frame)
+#             frame_bytes = buffer.tobytes()
+#             yield (b'--frame\r\n'
+#                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
 
 # Protected video feed endpoint
 @app.route("/video_feed")
 @token_required
 def video_feed(current_email):
-    # If you use <img src="/video_feed">, browsers won't send Authorization header.
-    # Two options:
-    # 1) Use fetch() to request with header and create blob URL (recommended for JWT).
-    # 2) Use token in querystring ?token=... (less secure).
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return jsonify({
+        "error": "video_feed_disabled",
+        "message": "Video streaming dinonaktifkan. Gunakan endpoint /api/detect_frame untuk inferensi YOLO."
+    }), 410
 
 # -----------------------------
 # CRUD Produk (kept), protect mutations
