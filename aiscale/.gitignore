@@ -1,0 +1,42 @@
+# --- VIRTUAL ENVIRONMENT ---
+env/
+venv/
+ENV/
+.venv/
+
+# --- PYTHON CACHE & COMPILED FILES ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dll
+
+# --- LOG FILES ---
+*.log
+
+# --- LOCAL CONFIG / DB ---
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# --- SYSTEM FILES ---
+Thumbs.db
+.DS_Store
+
+# --- IDE FILES ---
+.vscode/
+.idea/
+
+# --- YOLO / ML OUTPUT ---
+runs/
+
+# --- MODEL / WEIGHTS (gunakan Git LFS jika perlu) ---
+*.pt
+*.pth
+*.weights
+*.onnx
+
+# --- MEDIA UPLOADS ---
+uploads/

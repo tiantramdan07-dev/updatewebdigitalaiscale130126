@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons"; // ========ChevronLeftIcon, kalau ditampilkan back to dashboard========
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
@@ -89,14 +89,14 @@ export default function SignUpForm() {
         status={modalStatus}
         onClose={() => setModalOpen(false)}
       />
-
+      {/* ======= Back to dashboard ======= 
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
         <Link to="/" className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
           <ChevronLeftIcon className="size-5" />
           Back to dashboard
         </Link>
       </div>
-
+      */}
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="flex flex-col items-center mb-6">
           <img src="images/logo/logoimiwarna.png" alt="Logo Light" className="w-24 h-24 object-contain block dark:hidden" />
@@ -184,9 +184,20 @@ export default function SignUpForm() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Checkbox className="w-5 h-5" checked={isChecked} onChange={setIsChecked} />
-                <p className="inline-block font-normal text-gray-500 dark:text-gray-400">By creating an account, you agree to the <span className="text-gray-800 dark:text-white/90">Terms and Conditions</span> and our <span className="text-gray-800 dark:text-white">Privacy Policy</span></p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Checkbox 
+                    checked={isChecked} 
+                    onChange={setIsChecked} 
+                    className="w-4 h-4 rounded border-gray-400 dark:border-gray-500 data-[state=checked]:bg-gray-800 dark:data-[state=checked]:bg-white"
+                  />
+                  <p className="font-normal text-gray-700 text-theme-sm dark:text-gray-400">
+                    By creating an account, you agree to the{" "}
+                    <span className="text-gray-900 dark:text-white">Terms and Conditions</span>{" "}
+                    and our{" "}
+                    <span className="text-gray-900 dark:text-white">Privacy Policy</span>
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -199,7 +210,7 @@ export default function SignUpForm() {
 
           <div className="mt-5">
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-              Already have an account? <Link to="/AiScale/signin" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">Sign In</Link>
+              Already have an account? <Link to="/signin" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">Sign In</Link>
             </p>
           </div>
 
