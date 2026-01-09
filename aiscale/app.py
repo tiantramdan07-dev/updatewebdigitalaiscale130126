@@ -95,10 +95,10 @@ latest_detection = {}
 scale_connection = None
 
 # worker pool for frames
-WORKER_POOL = ThreadPoolExecutor(max_workers=1)
+WORKER_POOL = ThreadPoolExecutor(max_workers=4)
 client_last_ts = {}
 client_lock = Lock()
-MIN_INTERVAL_S = 0.2 # 5 frames per second max
+MIN_INTERVAL_S = 0.06
 
 # -----------------------------
 # AUTH helpers (JWT)
