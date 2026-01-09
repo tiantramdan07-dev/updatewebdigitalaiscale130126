@@ -39,7 +39,7 @@ DB_CONFIG = {
     "port": int(os.environ.get("DB_PORT", 5432)),
     "user": os.environ.get("DB_USER", "postgres"),
     "password": os.environ.get("DB_PASS", "gajahbengkak"),
-    "dbname": os.environ.get("DB_NAME", "ujicobamodelai")
+    "dbname": os.environ.get("DB_NAME", "timbangandigitalai")
 }
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "super-secret-dev-key")  # change in production
@@ -95,10 +95,10 @@ latest_detection = {}
 scale_connection = None
 
 # worker pool for frames
-WORKER_POOL = ThreadPoolExecutor(max_workers=4)
+WORKER_POOL = ThreadPoolExecutor(max_workers=1)
 client_last_ts = {}
 client_lock = Lock()
-MIN_INTERVAL_S = 0.06
+MIN_INTERVAL_S = 0.2 # 5 frames per second max
 
 # -----------------------------
 # AUTH helpers (JWT)
@@ -343,13 +343,13 @@ def api_status():
 
 
 # Protected video feed endpoint
-@app.route("/video_feed")
-@token_required
-def video_feed(current_email):
-    return jsonify({
-        "error": "video_feed_disabled",
-        "message": "Video streaming dinonaktifkan. Gunakan endpoint /api/detect_frame untuk inferensi YOLO."
-    }), 410
+# @app.route("/video_feed")
+# @token_required
+# def video_feed(current_email):
+#    return jsonify({
+#        "error": "video_feed_disabled",
+#        "message": "Video streaming dinonaktifkan. Gunakan endpoint /api/detect_frame untuk inferensi YOLO."
+#    }), 410
 
 # -----------------------------
 # CRUD Produk (kept), protect mutations
