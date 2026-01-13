@@ -9,13 +9,13 @@ DB_CONFIG = {
     "port": int(os.environ.get("DB_PORT", 5432)),
     "user": os.environ.get("DB_USER", "postgres"),
     "password": os.environ.get("DB_PASS", "gajahbengkak"),
-    "dbname": os.environ.get("DB_NAME", "ujicobamodelai")
+    "dbname": os.environ.get("DB_NAME", "timbangandigitalai")
 }
 
 def main():
-    first = input("First name: ") or "Admin"
-    last = input("Last name: ") or "User"
-    email = input("Email: ") or "admin@example.com"
+    first = input("First name: ") or "Ryan"
+    last = input("Last name: ") or "Jackson"
+    email = input("Email: ") or "RyanJakson01@example.com"
     pw = getpass.getpass("Password: ")
     if not pw:
         print("Empty password, abort.")
