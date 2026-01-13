@@ -103,17 +103,19 @@ MIN_INTERVAL_S = 0.06
 # -----------------------------
 # AUTH helpers (JWT)
 # -----------------------------
-def create_token(email: str):
+def create_token(user):
     payload = {
-        "email": email,
+        "id": user["id"],
+        "email": user["email"],
+        "role": user["role"],
         "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS),
         "iat": datetime.utcnow()
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=JWT_ALGO)
-    # pyjwt returns str in v2+, bytes in older; ensure string
     if isinstance(token, bytes):
         token = token.decode("utf-8")
     return token
+
 
 def decode_token(token: str):
     try:
@@ -220,19 +222,30 @@ def auth_login():
 
     email = (data.get("email") or "").strip().lower()
     password = data.get("password")
+
     if not email or not password:
         return jsonify({"error": "Silahkan masukkan email dan kata sandi Anda"}), 400
 
     db = get_db()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cur.execute("SELECT id, email, password_hash FROM users WHERE email = %s", (email,))
+    cur.execute("""
+        SELECT id, email, password_hash, role
+        FROM users
+        WHERE email = %s
+    """, (email,))
     user = cur.fetchone()
     cur.close(); db.close()
+
     if not user or not check_password_hash(user["password_hash"], password):
         return jsonify({"error": "user atau password salah"}), 401
 
-    token = create_token(user["email"])
-    return jsonify({"token": token, "email": user["email"]})
+    token = create_token(user)
+
+    return jsonify({
+        "token": token,
+        "email": user["email"],
+        "role": user["role"]
+    })
 
 @app.route("/auth/me", methods=["GET"])
 @token_required
